@@ -10,10 +10,12 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    zr_modbus.c
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    zr_modbus.h
 
 FORMS += \
     mainwindow.ui
