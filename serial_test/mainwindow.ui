@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>949</width>
+    <width>878</width>
     <height>707</height>
    </rect>
   </property>
@@ -14,25 +14,12 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="SaveRxBufButton">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>600</y>
-      <width>120</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>保存数据</string>
-    </property>
-   </widget>
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>10</x>
       <y>20</y>
-      <width>450</width>
+      <width>430</width>
       <height>300</height>
      </rect>
     </property>
@@ -48,7 +35,7 @@
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>420</width>
+        <width>430</width>
         <height>206</height>
        </rect>
       </property>
@@ -415,7 +402,7 @@
      <widget class="QPushButton" name="clearRxButton">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>180</x>
         <y>230</y>
         <width>160</width>
         <height>23</height>
@@ -1078,65 +1065,137 @@
        </item>
       </layout>
      </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="layoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>860</x>
-      <y>370</y>
-      <width>77</width>
-      <height>54</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_4">
-     <item>
-      <widget class="QPushButton" name="pbtSend">
+     <item row="1" column="1">
+      <widget class="QPushButton" name="clearTxHistoryButton">
        <property name="text">
-        <string>发送</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pbtClearSend">
-       <property name="text">
-        <string>清空</string>
+        <string>清除发送历史</string>
        </property>
       </widget>
      </item>
     </layout>
    </widget>
-   <widget class="QPlainTextEdit" name="pteSend">
+   <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>460</x>
-      <y>350</y>
-      <width>378</width>
-      <height>80</height>
+      <y>40</y>
+      <width>411</width>
+      <height>591</height>
      </rect>
     </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>16777215</width>
-      <height>80</height>
-     </size>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QPlainTextEdit" name="pteShowRecieve"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QPlainTextEdit" name="pteSend">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>80</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QPushButton" name="pbtSend">
+           <property name="text">
+            <string>发送</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pbtClearSend">
+           <property name="text">
+            <string>清空</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QComboBox" name="cbbSendHistory">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>64</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QPlainTextEdit" name="pteShowRecieve">
+   <widget class="QGroupBox" name="horizontalGroupBox_8">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>20</y>
-      <width>460</width>
-      <height>300</height>
+      <x>10</x>
+      <y>570</y>
+      <width>440</width>
+      <height>60</height>
      </rect>
     </property>
+    <property name="title">
+     <string>日志设置</string>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_14">
+     <item>
+      <widget class="QCheckBox" name="cbEnableLog">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="leLogPath">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="clearButtonEnabled">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="tbtSeleteLogPath">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -1144,7 +1203,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>949</width>
+     <width>878</width>
      <height>23</height>
     </rect>
    </property>

@@ -1,15 +1,37 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QActionGroup>
+#include <QDateTime>
+#include <QDebug>
+#include <QFile>
+#include <QFileDialog>
+#include <QHeaderView>
+#include <QHostAddress>
+#include <QIcon>
+#include <QImage>
 #include <QLabel>
+#include <QList>
 #include <QMainWindow>
 #include <QMutex>
+#include <QNetworkAddressEntry>
+#include <QNetworkInterface>
+#include <QPixmap>
 #include <QSerialPort>
 #include <QSerialPortInfo>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QString>
 #include <QTableWidgetItem>
+#include <QTextStream>
+#include <QThread>
+#include <QTimer>
+#include <QUuid>
 
 #include "serialprocess.h"
 #include "settingconfig.h"
+#include "ttkmarqueelabel.h"
+#include "ui_mainwindow.h"
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -30,9 +52,36 @@ class MainWindow : public QMainWindow {
     STATUS_PAUSE = 1,
     STATUS_OCCUR_ERROR = 2
   };
+  const QString ui_getSendData(void);
+
+  void ui_setSendData(const QString &str);
+  void ui_clearSendData(void);
 
   void serial_send(const QString &data, int len);
   void serial_send(void);
+  // Recieve
+  int ui_recieve_getRecieveMode(void);
+
+  bool ui_show_isEnableAutoNewLine(void);
+
+  bool ui_show_isEnableShowSend(void);
+
+  bool ui_show_isEnableShowTime(void);
+  bool ui_isEnableBufferMode(void);
+  bool ui_show_isEnableShowColor(void);
+  int ui_recvieve_getBufferSize(void);
+  // Send
+  int ui_send_getSendMode(void);
+
+  bool ui_send_isEnableAutoRepeat(void);
+  void ui_send_setAutoRepeatState(bool set);
+
+  int ui_send_getRepeatTime(void);  // Unit: ms
+
+  int ui_send_getRepeatTimeUnit(void);
+  // LOG
+  const QString ui_log_getLogPath();
+  bool ui_log_isEnableLog(void);
 
  public slots:
 
@@ -41,28 +90,46 @@ class MainWindow : public QMainWindow {
 
  private slots:
   void on_openButton_clicked();
-  void SerialPortReadyRead_slot();
 
   void on_clearRxButton_clicked();
-  void serialPortWrite();
-
-  void on_SaveRxBufButton_clicked();
+  //  void serialPortWrite();
 
   void on_pbtSend_clicked();
   void handle_serialhelper_readyread(void);
+  void on_clearTxHistoryButton_clicked();
+  void handle_setting_changed(SettingConfig config);
+ signals:
+  void ui_serial_config_changed();
+
+  void ui_serial_open(void);
+  void ui_serial_close(void);
+  void ui_serial_start(void);
+  void ui_serial_pause(void);
+  void ui_serial_send(const QByteArray &data, int len);
+
+  void ui_tcp_start(const QString &ip, int port, int role);
+  void ui_tcp_stop(int role);
+  void ui_tcp_send(const QByteArray &data, int len, int role,
+                   const QString &desip, int id = -1);
 
  private:
   Ui::MainWindow *ui;
   QLabel *slabel;
   QLabel *lbTxBytes;
   QLabel *lbRxBytes;
+  TTKMarqueeLabel *lbLogPath;
+
   QSerialPort *serialPort;
   SerialProcess *my_serial = nullptr;  // 串口助手
                                        //  TCPHelper *tcp_helper = nullptr;
                                        //  UDPHelper *udp_helper = nullptr;
   QMutex m_mutex;
+  QUuid myuuid;
   ulong txBytes = 0;
   ulong rxBytes = 0;
+  QByteArray fileBuffer =
+      QByteArray(settingConfig.logConfig.bufferSize * 1024, '\0');
+
   QByteArray recieveBuffer;
 
   int currentTab = 0;
@@ -76,6 +143,13 @@ class MainWindow : public QMainWindow {
 
   int ui_getCurrentTab(void);
 
+  void ui_log_setLogPath(const QString &p);
+
+  void ui_log_setSaveLogState(bool save);
+
+  void ui_log_logSaveToFile(const QString &str);
+  void ui_log_seleteLogPath(void);
+
   //扫描串口
   void scanSerialPort();
   void ui_initSetting(SettingConfig *config);
@@ -84,6 +158,10 @@ class MainWindow : public QMainWindow {
   void ui_creatToolBar(void);
 
   void ui_creatStatusBar(void);
+
+  void apply_ui_serial_config(const SerialConfig &config);
+
+  void update_ui_serial_config(void);
 
   void ui_serial_setPortName(QSerialPortInfo info);
   void ui_serial_setBaud(qint64 baud);
@@ -102,7 +180,6 @@ class MainWindow : public QMainWindow {
 
   const SerialConfig ui_serial_getConfig(void);
 
-  void ui_serial_setConfig(SerialConfig config);
   void ui_serial_toggle_pbtSend(bool _isOpen);
 
   const QString inline ui_net_makeInterfaceStr(QNetworkInterface interface) {
@@ -138,7 +215,11 @@ class MainWindow : public QMainWindow {
   void ui_addSendHistory(const QString &str);
   void ui_addSendHistory(const QStringList &list);
   void ui_clearSendHistory(void);
-
   void ui_recieve_initRecieveFontColor(void);
+
+  QColor ui_recieve_getRecieveFontColor(void);
+  void ui_recieve_setRecieveFontColorState(bool state);
+
+  void ui_setShowPlaintFont(const QFont &font);
 };
 #endif  // MAINWINDOW_H
