@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <QTime>
 
+#include "aboutdialog.h"
 #include "serialprocess.h"
 #include "ui_mainwindow.h"
 
@@ -124,6 +125,11 @@ void MainWindow::ui_initConnect() {
                        }
                      }
                    });
+  QObject::connect(this->ui->actionAbout, &QAction::triggered, [=]() {
+    AboutDialog *about = new AboutDialog;
+
+    about->show();
+  });
   QObject::connect(
       this->ui->cbbPort, QOverload<int>::of(&QComboBox::currentIndexChanged),
       [=](int index) {

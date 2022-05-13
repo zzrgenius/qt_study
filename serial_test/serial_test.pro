@@ -13,18 +13,21 @@ TEMPLATE = app
 TARGET = DevilTools
 
 SOURCES += \
+    aboutdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     serialprocess.cpp \
     zr_modbus.c
 
 HEADERS += \
+    aboutdialog.h \
     mainwindow.h \
     serialprocess.h \
     settingconfig.h \
     zr_modbus.h
 
 FORMS += \
+    aboutdialog.ui \
     mainwindow.ui
 
 #TRANSLATIONS += \    serial_test_zh_CN.ts
