@@ -40,12 +40,12 @@ win32:RC_FILE = SerialPort.rc
 DISTFILES += \
     SerialPort.rc
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/release/libTTKCore.a
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/debug/libTTKCore.a
-else:unix: LIBS += -L$$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/ -lTTKCore
+#win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/release/libTTKCore.a
+#else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/debug/libTTKCore.a
+#else:unix: LIBS += -L$$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/ -lTTKCore
 
-INCLUDEPATH += $$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/debug
-DEPENDPATH += $$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/debug
+#INCLUDEPATH += $$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/debug
+#DEPENDPATH += $$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/debug
 
 
 
