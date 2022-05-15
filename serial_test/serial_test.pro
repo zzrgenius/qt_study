@@ -13,17 +13,24 @@ TEMPLATE = app
 TARGET = DevilTools
 
 SOURCES += \
+    TinyFrame/TinyFrame.c \
     aboutdialog.cpp \
     main.cpp \
     mainwindow.cpp \
     serialprocess.cpp \
-    zr_modbus.c
+    tcphelper.cpp \
+    utilities.cpp \
+    zr_modbus.cpp
 
 HEADERS += \
+    TinyFrame/TF_Config.h \
+    TinyFrame/TinyFrame.h \
     aboutdialog.h \
     mainwindow.h \
     serialprocess.h \
     settingconfig.h \
+    tcphelper.h \
+    utilities.h \
     zr_modbus.h
 
 FORMS += \

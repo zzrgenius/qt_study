@@ -1,13 +1,14 @@
 #include "mainwindow.h"
 
+#include "aboutdialog.h"
+#include "serialprocess.h"
+#include "ui_mainwindow.h"
+#include "zr_modbus.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
 #include <QTime>
-
-#include "aboutdialog.h"
-#include "serialprocess.h"
-#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
@@ -42,7 +43,7 @@ void MainWindow::ui_initConnect() {
 
   QObject::connect(&refresh_port_timer, &QTimer::timeout, [=]() {
     isAutorefresh = true;
-    if (ui_getCurrentTab() == TAB_SERIAL) {  // 串口
+    if (ui_getCurrentTab() == TAB_SERIAL) { // 串口
       /* QString strId = myuuid.toString();
        qDebug() << strId;
        //输出结果："{b5eddbaf-984f-418e-88eb-cf0b8ff3e775}"
@@ -51,11 +52,12 @@ void MainWindow::ui_initConnect() {
            "-");           // 一般习惯去掉左右花括号和连字符
        qDebug() << strId;  //  */
       //      scanSerialPort();
-    } else if (ui_getCurrentTab() == TAB_NETWORK) {  // TCP/UDP
+    } else if (ui_getCurrentTab() == TAB_NETWORK) { // TCP/UDP
       //            ui_refreshNetInterface();
       QList<QNetworkInterface> nlist = QNetworkInterface::allInterfaces();
       int ls = nlist.size();
-      if (ls == 0) return;
+      if (ls == 0)
+        return;
       int ns = this->ui->cbbNetworkInterface->count();
 
       if (ls != ns) {
@@ -96,7 +98,8 @@ void MainWindow::ui_initConnect() {
           }
         }
         isAutorefresh = false;
-        if (ci > ls - 1) ci = ls - 1;
+        if (ci > ls - 1)
+          ci = ls - 1;
 
         if (eth < 0)
           this->ui->cbbNetworkInterface->setCurrentIndex((ci < 0) ? 0 : ci);
@@ -112,14 +115,14 @@ void MainWindow::ui_initConnect() {
   QObject::connect(this->ui->tabWidget, &QTabWidget::currentChanged,
                    [=](int index) {
                      currentTab = index;
-                     if (index == 0) {  // serial
+                     if (index == 0) { // serial
                        if (!my_serial) {
                          my_serial = new SerialProcess(this);
                        } else {
                          my_serial->close();
                        }
                      }
-                     if (index == 1) {  // tcp/udp
+                     if (index == 1) { // tcp/udp
                        if (my_serial) {
                          my_serial->close();
                        }
@@ -133,14 +136,18 @@ void MainWindow::ui_initConnect() {
   QObject::connect(
       this->ui->cbbPort, QOverload<int>::of(&QComboBox::currentIndexChanged),
       [=](int index) {
-        if (isAutorefresh) return;  // 不响应自动刷新导致的变化
-        if (index < 0) return;
+        if (isAutorefresh)
+          return; // 不响应自动刷新导致的变化
+        if (index < 0)
+          return;
         this->ui->cbbPort->setToolTip(this->ui->cbbPort->currentText());
 
         bool op = my_serial->isOpen();
-        if (op) my_serial->close();
+        if (op)
+          my_serial->close();
         my_serial->setPortName(ui_serial_getPortName());
-        if (op) my_serial->open(QIODevice::ReadWrite);
+        if (op)
+          my_serial->open(QIODevice::ReadWrite);
 
         update_ui_serial_config();
         qDebug() << "ui:" << ui_serial_getPortName();
@@ -155,7 +162,7 @@ void MainWindow::ui_initConnect() {
       });
 
   QObject::connect(this->ui->pbtClearSend, &QPushButton::clicked,
-                   [=]() {  // 清空发送输入文本框
+                   [=]() { // 清空发送输入文本框
                      ui_clearSendData();
                    });
 
@@ -167,7 +174,7 @@ void MainWindow::ui_initConnect() {
   //      });
 
   QObject::connect(this->ui->actionOpenLogDir, &QAction::triggered,
-                   [=](bool b) {  // 选择日志目录
+                   [=](bool b) { // 选择日志目录
                      QString _p = ui_log_getLogPath();
                      int pos = _p.lastIndexOf('/');
                      QString _pp = _p.mid(pos + 1);
@@ -178,7 +185,8 @@ void MainWindow::ui_initConnect() {
                          this, QString::fromUtf8("选择日志目录"), _p,
                          QFileDialog::ShowDirsOnly);
 
-                     if (p.isEmpty()) return;
+                     if (p.isEmpty())
+                       return;
                      ui_log_setLogPath(p);
                    });
 
@@ -191,6 +199,11 @@ void MainWindow::ui_initConnect() {
                    [=](bool state) {
                      settingConfig.sendConfig.sendMode = ui_send_getSendMode();
                    });
+  //  QObject::connect(this->ui->rbtSHex, &QRadioButton::toggled,
+  //                   [=](bool state) {
+  //                     settingConfig.sendConfig.sendMode =
+  //                     ui_send_getSendMode();
+  //                   });
 
   QObject::connect(this->ui->cbAutoNewLine, &QCheckBox::stateChanged,
                    [=](int state) {
@@ -230,10 +243,11 @@ void MainWindow::ui_initConnect() {
                    });
 
   QObject::connect(this->ui->cbAutoResend, &QCheckBox::stateChanged,
-                   [=](int state) {  // 是否定时发送
+                   [=](int state) { // 是否定时发送
                      if (state == Qt::Checked) {
                        settingConfig.sendConfig.enableAutoResend = true;
-                       if (serialStatus != STATUS_OPEN) return;
+                       if (serialStatus != STATUS_OPEN)
+                         return;
 #ifdef SERIAL_THREAD
 #else
       my_serial->setAutoWrite(ui_getSendData().toUtf8());
@@ -243,7 +257,8 @@ void MainWindow::ui_initConnect() {
                      if (state == Qt::Unchecked) {
                        settingConfig.sendConfig.enableAutoResend = false;
 #ifdef SERIAL_THREAD
-                       if (resend_timer.isActive()) resend_timer.stop();
+                       if (resend_timer.isActive())
+                         resend_timer.stop();
 #else
       my_serial->stopAutoWrite();
 #endif
@@ -251,7 +266,7 @@ void MainWindow::ui_initConnect() {
                    });
 
   QObject::connect(this->ui->tbtSeleteLogPath, &QToolButton::clicked,
-                   [=](bool b) {  // 选择日志路径
+                   [=](bool b) { // 选择日志路径
                      ui_log_seleteLogPath();
                    });
 
@@ -261,7 +276,7 @@ void MainWindow::ui_initConnect() {
           QString _lp = ui_log_getLogPath();
           int pos = _lp.lastIndexOf('/');
           QString _ln = _lp.mid(pos + 1);
-          if (!_ln.contains(".txt")) {  // 不含txt文件, 说明是目录
+          if (!_ln.contains(".txt")) { // 不含txt文件, 说明是目录
             _lp.append(QString::fromUtf8("/log_%1.txt")
                            .arg(QDateTime::currentDateTime().toString(
                                QString::fromUtf8("yyyyMMddhhmmss"))));
@@ -366,7 +381,8 @@ void MainWindow::update_ui_serial_config() {
 void MainWindow::on_openButton_clicked() {
   if (ui->openButton->text() == "打开串口") {
     /* 串口设置 */
-    if (ui_serial_getPortNumber() == 0) return;
+    if (ui_serial_getPortNumber() == 0)
+      return;
     serialStatus = STATUS_OPEN;
     const SerialConfig config = ui_serial_getConfig();
     apply_ui_serial_config(config);
@@ -436,6 +452,7 @@ int MainWindow::ui_recieve_getRecieveMode() {
     return ASCII_MODE;
   }
   if (this->ui->rbtRHex->isChecked()) {
+
     return HEX_MODE;
   }
   return ASCII_MODE;
@@ -463,9 +480,26 @@ int MainWindow::ui_recvieve_getBufferSize() {
 
 int MainWindow::ui_send_getSendMode() {
   if (this->ui->rbtSASCII->isChecked()) {
+    this->ui->cb_CRC->setEnabled(false);
+    if (!this->ui->pteSend->toPlainText().isEmpty()) {
+      QString src_string = ui_getSendData();
+      QString res_str = HexToAscII(src_string);
+      this->ui->pteSend->setPlainText(res_str);
+    }
     return ASCII_MODE;
   }
   if (this->ui->rbtSHex->isChecked()) {
+    this->ui->cb_CRC->setEnabled(true);
+
+    if (!this->ui->pteSend->toPlainText().isEmpty()) {
+      QString head = ui_getSendData();
+      QByteArray arr = ui->pteSend->toPlainText().toUtf8().toHex(' ').toUpper();
+      //      dst.prepend(head);
+      //      head.prepend(" ");
+      //      dst.replace(" ", head);
+      this->ui->pteSend->setPlainText(arr);
+    }
+
     return HEX_MODE;
   }
   return ASCII_MODE;
@@ -578,7 +612,8 @@ void MainWindow::ui_showMessage(const QString &message, int time,
 int MainWindow::ui_serial_getPortNumber() { return this->ui->cbbPort->count(); }
 
 const QString MainWindow::ui_serial_getPortName() {
-  if (ui_serial_getPortNumber() == 0) return QString::fromUtf8("");
+  if (ui_serial_getPortNumber() == 0)
+    return QString::fromUtf8("");
   const QString pn = this->ui->cbbPort->currentText();
   //  int pos = pn.indexOf(']');
   return pn;
@@ -613,41 +648,40 @@ void MainWindow::handle_serial_error(int err) {
   SerialConfig config = ui_serial_getConfig();
   qDebug() << "Serial Error:" << config.errorStr[int(error)];
   switch (error) {
-    case QSerialPort::NoError:
-      if (serialStatus == STATUS_OPEN) {
-        const QString mes = QString::fromUtf8("%1 OPENED [%2][%3][%4][%5][%6]")
-                                .arg(config.portName)
-                                .arg(config.portBaud)
-                                .arg(config.portDataBit)
-                                .arg(config.parityStr[config.portParity])
-                                .arg(config.stopStr[config.portStopBit])
-                                .arg(config.flowStr[config.portFlow]);
-        ui_showMessage(mes);
+  case QSerialPort::NoError:
+    if (serialStatus == STATUS_OPEN) {
+      const QString mes = QString::fromUtf8("%1 OPENED [%2][%3][%4][%5][%6]")
+                              .arg(config.portName)
+                              .arg(config.portBaud)
+                              .arg(config.portDataBit)
+                              .arg(config.parityStr[config.portParity])
+                              .arg(config.stopStr[config.portStopBit])
+                              .arg(config.flowStr[config.portFlow]);
+      ui_showMessage(mes);
+    }
+    if (serialStatus == STATUS_CLOSE) {
+      if (ui_serial_getPortNumber()) {
+        const QString mes = QString::fromUtf8("%1 CLOSE").arg(config.portName);
+        ui_showMessage(mes, 0, Qt::red);
+      } else {
+        ui_showMessage("");
       }
-      if (serialStatus == STATUS_CLOSE) {
-        if (ui_serial_getPortNumber()) {
-          const QString mes =
-              QString::fromUtf8("%1 CLOSE").arg(config.portName);
-          ui_showMessage(mes, 0, Qt::red);
-        } else {
-          ui_showMessage("");
-        }
-      }
+    }
+    break;
+  case QSerialPort::TimeoutError:
+    break;
+  case QSerialPort::NotOpenError:
+    if (serialStatus == STATUS_CLOSE) {
       break;
-    case QSerialPort::TimeoutError:
-      break;
-    case QSerialPort::NotOpenError:
-      if (serialStatus == STATUS_CLOSE) {
-        break;
-      }
-    default:
-      const QString mes = QString::fromUtf8("%1 串口发生意外错误 [%2]")
-                              .arg(ui_serial_getPortName())
-                              .arg(config.errorStr[(int)error]);
-      ui_showMessage(mes, 0, Qt::black);
+    }
+  default:
+    const QString mes = QString::fromUtf8("%1 串口发生意外错误 [%2]")
+                            .arg(ui_serial_getPortName())
+                            .arg(config.errorStr[(int)error]);
+    ui_showMessage(mes, 0, Qt::black);
 
-      serialStatus = STATUS_OCCUR_ERROR;
-      break;
+    serialStatus = STATUS_OCCUR_ERROR;
+    break;
   }
 }
 
@@ -692,8 +726,9 @@ void MainWindow::handle_serialhelper_readyread() {
 }
 
 void MainWindow::ui_log_logSaveToFile(const QString &str) {
-  if (!settingConfig.logConfig.enableSaveLog) return;
-  if (settingConfig.logConfig.enableBuffer) {  // 使能缓冲区
+  if (!settingConfig.logConfig.enableSaveLog)
+    return;
+  if (settingConfig.logConfig.enableBuffer) { // 使能缓冲区
 
   } else {
     QFile file(settingConfig.logConfig.filePath);
@@ -736,10 +771,12 @@ void MainWindow::ui_showSend(const QString &str, bool t) {
 void MainWindow::serial_send(const QString &data, int len) {
   //    qDebug() << "MainWindow::ui_serial_send:" << QThread::currentThread();
   QString sendStr = QString(data);
-
+  QString showsendStr;
   sendStr.replace(QLatin1String("\n"),
                   QLatin1String(settingConfig.lineEnd[settingConfig.lineMode]));
-
+  if (sendStr.isEmpty()) {
+    return;
+  }
   if (settingConfig.sendConfig.sendMode == ASCII_MODE) {
     ui_addSendHistory(sendStr);
     const QByteArray sendBytes = sendStr.toUtf8();
@@ -751,25 +788,53 @@ void MainWindow::serial_send(const QString &data, int len) {
       my_serial->write(sendBytes);
 
     emit ui_serial_send(sendBytes, len);
+    showsendStr = tr("[ASCII]:%1").arg(sendStr);
 
     txBytes += len;
   }
   if (settingConfig.sendConfig.sendMode == HEX_MODE) {
-    const QByteArray hex = sendStr.toUtf8().toHex().toUpper();
-    len = hex.size();
+    qDebug() << sendStr;
+    QString tm_str = sendStr.remove(QRegExp("\\s"));
+    qDebug() << tm_str;
+    len = tm_str.size();
+    if (len % 2 == 1) {
+      tm_str = tm_str.insert(len - 1, '0');
+    }
+    qDebug() << tm_str;
 
-    my_serial->write(hex);
+    //    const QByteArray hex = sendStr.toUtf8().toHex(' ').toUpper();
+    //       QByteArray hex =
 
-    if (ui_send_isEnableAutoRepeat()) my_serial->setAutoWrite(hex);
+    QByteArray sendhex = QByteArray::fromHex(tm_str.toLatin1());
+    len = sendhex.size();
+    qDebug() << sendhex;
+    qDebug() << len;
 
-    emit ui_serial_send(hex, len);
+    //    qDebug() << sendhex;
 
-    sendStr = QString::fromUtf8(hex);
-    ui_addSendHistory(sendStr);
+    if (settingConfig.sendConfig.sendwithcrc) {
+      quint16 crc_temp = crc16ForModbus(sendhex);
+      qDebug() << crc_temp; //  */
+      sendhex.append((quint8)(crc_temp >> 8) & 0xff);
+      sendhex.append((quint8)(crc_temp)&0xff);
+    }
+    qDebug() << sendhex;
+
+    my_serial->write(sendhex);
+
+    if (ui_send_isEnableAutoRepeat())
+      my_serial->setAutoWrite(sendhex);
+
+    emit ui_serial_send(sendhex, len);
+
+    //    sendStr = QString::fromUtf8(sendhex);
+
+    ui_addSendHistory(tm_str);
+    showsendStr = tr("[HEX]:%1").arg(tm_str);
     txBytes += len;
   }
   if (settingConfig.showConfig.enableShowSend) {
-    ui_showSend(sendStr, settingConfig.showConfig.enableShowTime);
+    ui_showSend(showsendStr, settingConfig.showConfig.enableShowTime);
   } else {
     if (settingConfig.logConfig.enableSaveLog) {
       if (settingConfig.sendConfig.sendMode == ASCII_MODE) {
@@ -792,7 +857,12 @@ void MainWindow::serial_send(void) {
 }
 void MainWindow::on_pbtSend_clicked() {
   if (ui_getCurrentTab() == 0) {
-    serial_send();
+    if (my_serial->isOpen()) {
+
+      serial_send();
+    } else {
+      QMessageBox::information(this, "提示", "串口未打开");
+    }
     return;
   }
 }
@@ -822,7 +892,8 @@ void MainWindow::ui_serial_setDataBit(QSerialPort::DataBits d) {
 
 void MainWindow::ui_serial_setParity(QSerialPort::Parity p) {
   int pi = (int)p;
-  if (pi > 0) pi -= 1;
+  if (pi > 0)
+    pi -= 1;
   this->ui->cbbParity->setCurrentIndex(pi);
 }
 
@@ -856,7 +927,8 @@ const SerialConfig MainWindow::ui_serial_getConfig() {
 
 const QString MainWindow::ui_net_getCurrentInterfaceHardAddr() {
   int ns = this->ui->cbbNetworkInterface->count();
-  if (ns == 0) return QString("");
+  if (ns == 0)
+    return QString("");
   const QString str = this->ui->cbbNetworkInterface->currentText();
   int pos = str.indexOf('[');
   int pos2 = str.indexOf(']');
@@ -933,7 +1005,8 @@ void MainWindow::ui_clearRecieve() {
   this->ui->pteShowRecieve->clear();
   this->ui->pteShowRecieve->moveCursor(QTextCursor::Start);
 
-  if (!recieveBuffer.isEmpty()) recieveBuffer.clear();
+  if (!recieveBuffer.isEmpty())
+    recieveBuffer.clear();
 
   txBytes = 0;
   rxBytes = 0;
@@ -1153,4 +1226,126 @@ void MainWindow::ui_clearSendHistory() {
 void MainWindow::on_clearTxHistoryButton_clicked() { ui_clearSendHistory(); }
 bool MainWindow::ui_isEnableBufferMode() {
   return this->ui->cbRecBufferMode->isChecked();
+}
+
+void MainWindow::on_cb_CRC_stateChanged(int arg1) {
+  if (this->ui->cb_CRC->isChecked()) {
+
+    settingConfig.sendConfig.sendwithcrc = true;
+  } else {
+    settingConfig.sendConfig.sendwithcrc = false;
+  }
+}
+
+void MainWindow::on_pteSend_textChanged() {
+  QString sendTextString = this->ui->pteSend->document()->toPlainText();
+  if (sendTextString.isEmpty()) {
+    return;
+  }
+  if (settingConfig.sendConfig.sendMode == HEX_MODE) {
+    char ch;
+    bool flag = false;
+    uint32_t i, len;
+    //去掉无用符号
+    sendTextString = sendTextString.replace(' ', "");
+    sendTextString = sendTextString.replace(',', "");
+    sendTextString = sendTextString.replace('\r', "");
+    sendTextString = sendTextString.replace('\n', "");
+    sendTextString = sendTextString.replace('\t', "");
+    sendTextString = sendTextString.replace("0x", "");
+    sendTextString = sendTextString.replace("0X", "");
+    //判断数据合法性
+    //判断数据合法性
+    for (i = 0, len = sendTextString.length(); i < len; i++) {
+      ch = sendTextString.at(i).toLatin1();
+      if (ch >= '0' && ch <= '9') {
+        flag = false;
+      } else if (ch >= 'a' && ch <= 'f') {
+        flag = false;
+      } else if (ch >= 'A' && ch <= 'F') {
+        flag = false;
+      } else {
+        flag = true;
+      }
+    }
+    if (flag)
+      QMessageBox::warning(this, "警告", "输入内容包含非法16进制字符");
+  }
+}
+
+void MainWindow::on_tabWidget_tabBarClicked(int index) {}
+
+void MainWindow::on_tabWidget_currentChanged(int index) {
+  if (ui_getCurrentTab() == TAB_NETWORK) {
+  } else if (ui_getCurrentTab() == TAB_SERIAL) {
+    while (this->ui->cbbPort->count() > 0) {
+      this->ui->cbbPort->removeItem(0);
+    }
+    scanSerialPort();
+  }
+}
+
+bool MainWindow::ui_net_isEnableIPV6() {
+  return this->ui->cbEnableIPV6->isChecked();
+}
+
+int MainWindow::ui_net_getRole() {
+  return this->ui->cbbNetRole->currentIndex();
+}
+
+int MainWindow::ui_net_getProfile() {
+  return this->ui->cbbNetProfile->currentIndex();
+}
+
+int MainWindow::ui_net_getPort() { return this->ui->sbSourcePort->value(); }
+
+const QString MainWindow::ui_net_getIP() {
+  return this->ui->leIPSource->text();
+}
+
+void MainWindow::ui_net_setIP(const QString &ip) {
+  this->ui->leIPSource->setText(ip);
+}
+
+void MainWindow::on_openNetButton_clicked() {
+  int tmp = networkStatus;
+  if (networkStatus == STATUS_CLOSE) {
+    networkStatus = STATUS_OPEN;
+    settingConfig.netConfig.ip = ui_net_getIP();
+    settingConfig.netConfig.netRole = ui_net_getRole();
+    settingConfig.netConfig.port = ui_net_getPort();
+    settingConfig.netConfig.netProfile = ui_net_getProfile();
+
+    if (settingConfig.netConfig.netProfile == NetWorkSettingConfig::TCP) {
+      if (!tcp_helper)
+        tcp_helper = new TCPHelper(settingConfig.netConfig.netRole, this);
+      tcp_helper->start(QHostAddress(settingConfig.netConfig.ip),
+                        settingConfig.netConfig.port);
+#ifdef NETWORK_THREAD
+      emit ui_tcp_start(settingConfig.netConfig.ip,
+                        settingConfig.netConfig.port,
+                        settingConfig.netConfig.netRole);
+#endif
+    } else {
+      if (tcp_helper) {
+        tcp_helper->stop();
+        tcp_helper->deleteLater();
+        tcp_helper = nullptr;
+      }
+    }
+    //    if (settingConfig.netConfig.netProfile == NetWorkSettingConfig::UDP)
+    //    {
+    //      if (!udp_helper)
+    //        udp_helper = new UDPHelper(settingConfig.netConfig.netRole,
+    //        this);
+    //      udp_helper->start(QHostAddress(settingConfig.netConfig.ip),
+    //                        settingConfig.netConfig.port);
+    //    } else {
+    //      if (udp_helper) {
+    //        udp_helper->stop();
+    //        udp_helper->deleteLater();
+    //        udp_helper = nullptr;
+    //      }
+    //    }
+  }
 }

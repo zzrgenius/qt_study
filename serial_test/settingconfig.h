@@ -10,11 +10,11 @@
 #include <QSerialPortInfo>
 
 class SerialConfig {
- public:
-  const char* parityStr[6] = {"None", "", "Even", "Odd", "Space", "Mark"};
-  const char* flowStr[3] = {"None", "RTS/CTS", "XON/XOFF"};
-  const char* stopStr[4] = {"", "1", "2", "1.5"};
-  const char* errorStr[14] = {"NoError",
+public:
+  const char *parityStr[6] = {"None", "", "Even", "Odd", "Space", "Mark"};
+  const char *flowStr[3] = {"None", "RTS/CTS", "XON/XOFF"};
+  const char *stopStr[4] = {"", "1", "2", "1.5"};
+  const char *errorStr[14] = {"NoError",
                               "DeviceNotFoundError",
                               "PermissionError",
                               "OpenError",
@@ -54,7 +54,7 @@ enum LINE_MODE {
 };
 
 class ReceiveSettingConfig {
- public:
+public:
   int showMode;
   int lineMode;
   bool bufferMode;
@@ -67,22 +67,24 @@ class ReceiveSettingConfig {
 };
 
 class SendSettingConfig {
- public:
+public:
   int sendMode;
   bool enableAutoResend;
   int ResendTime;
   int ResendUnit;
+  bool sendwithcrc;
 
   SendSettingConfig() {
     sendMode = ASCII_MODE;
     enableAutoResend = false;
     ResendTime = 0;
     ResendUnit = 0;
+    sendwithcrc = false;
   }
 };
 
 class LogSettingConfig {
- public:
+public:
   bool enableSaveLog;
   QString filePath;
   int fileLimit;
@@ -97,7 +99,7 @@ class LogSettingConfig {
 };
 
 class ShowSettingConfig {
- public:
+public:
   int bufferSize;
   QFont font;
   bool enableShowColor;
@@ -123,7 +125,7 @@ class ShowSettingConfig {
 };
 
 class NetWorkSettingConfig {
- public:
+public:
   QNetworkInterface interface;
   int netRole;
   int netProfile;
@@ -142,7 +144,8 @@ class NetWorkSettingConfig {
 
   const QString getGlobalAddress(void) {
     QList<QNetworkAddressEntry> alist = interface.addressEntries();
-    if (alist.isEmpty()) return QString("");
+    if (alist.isEmpty())
+      return QString("");
     for (int i = 0; i < alist.size(); i++) {
       const QHostAddress addr = alist.at(i).ip();
       if (!addr.isNull() && addr.isGlobal()) {
@@ -154,8 +157,8 @@ class NetWorkSettingConfig {
 };
 
 class SettingConfig {
- public:
-  const char* lineEnd[4] = {"\r\n", "\n", "\n", "\r"};
+public:
+  const char *lineEnd[4] = {"\r\n", "\n", "\n", "\r"};
 
   int serialChanged;
   int lineMode;
@@ -172,4 +175,4 @@ class SettingConfig {
   }
   ~SettingConfig() {}
 };
-#endif  // SETTINGCONFIG_H
+#endif // SETTINGCONFIG_H

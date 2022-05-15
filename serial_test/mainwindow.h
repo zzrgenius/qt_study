@@ -1,6 +1,13 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "serialprocess.h"
+#include "settingconfig.h"
+#include "tcphelper.h"
+
+#include "ttkmarqueelabel.h"
+#include "ui_mainwindow.h"
+#include "utilities.h"
 #include <QActionGroup>
 #include <QDateTime>
 #include <QDebug>
@@ -27,11 +34,6 @@
 #include <QThread>
 #include <QTimer>
 #include <QUuid>
-
-#include "serialprocess.h"
-#include "settingconfig.h"
-#include "ttkmarqueelabel.h"
-#include "ui_mainwindow.h"
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -41,7 +43,7 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
- public:
+public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
   int btn_on_off = 0;
@@ -76,19 +78,19 @@ class MainWindow : public QMainWindow {
   bool ui_send_isEnableAutoRepeat(void);
   void ui_send_setAutoRepeatState(bool set);
 
-  int ui_send_getRepeatTime(void);  // Unit: ms
+  int ui_send_getRepeatTime(void); // Unit: ms
 
   int ui_send_getRepeatTimeUnit(void);
   // LOG
   const QString ui_log_getLogPath();
   bool ui_log_isEnableLog(void);
 
- public slots:
+public slots:
 
   void handle_serial_recieve_data(const QByteArray &data, int len);
   void handle_serial_error(int error);
 
- private slots:
+private slots:
   void on_openButton_clicked();
 
   void on_clearRxButton_clicked();
@@ -98,7 +100,17 @@ class MainWindow : public QMainWindow {
   void handle_serialhelper_readyread(void);
   void on_clearTxHistoryButton_clicked();
   void handle_setting_changed(SettingConfig config);
- signals:
+  void on_cb_CRC_stateChanged(int arg1);
+
+  void on_pteSend_textChanged();
+
+  void on_tabWidget_tabBarClicked(int index);
+
+  void on_tabWidget_currentChanged(int index);
+
+  void on_openNetButton_clicked();
+
+signals:
   void ui_serial_config_changed();
 
   void ui_serial_open(void);
@@ -112,7 +124,7 @@ class MainWindow : public QMainWindow {
   void ui_tcp_send(const QByteArray &data, int len, int role,
                    const QString &desip, int id = -1);
 
- private:
+private:
   Ui::MainWindow *ui;
   QLabel *slabel;
   QLabel *lbTxBytes;
@@ -120,9 +132,9 @@ class MainWindow : public QMainWindow {
   TTKMarqueeLabel *lbLogPath;
 
   QSerialPort *serialPort;
-  SerialProcess *my_serial = nullptr;  // 串口助手
-                                       //  TCPHelper *tcp_helper = nullptr;
-                                       //  UDPHelper *udp_helper = nullptr;
+  SerialProcess *my_serial = nullptr; // 串口助手
+  TCPHelper *tcp_helper = nullptr;
+  //  UDPHelper *udp_helper = nullptr;
   QMutex m_mutex;
   QUuid myuuid;
   ulong txBytes = 0;
@@ -134,6 +146,7 @@ class MainWindow : public QMainWindow {
 
   int currentTab = 0;
   int serialStatus = STATUS_CLOSE;
+  int networkStatus = STATUS_CLOSE;
 
   bool isAutorefresh = false;
 
@@ -199,6 +212,17 @@ class MainWindow : public QMainWindow {
   void ui_net_setCurrentInterface(QNetworkInterface interface);
   QNetworkInterface ui_net_getInterface(bool *ok);
 
+  bool ui_net_isEnableIPV6(void);
+
+  int ui_net_getRole(void);
+
+  int ui_net_getProfile(void);
+
+  int ui_net_getPort(void);
+
+  const QString ui_net_getIP(void);
+
+  void ui_net_setIP(const QString &ip);
   void ui_showTime();
   void ui_showSend(const QString &str, bool t = false);
   void ui_showRecieve(const QString &str, bool t = false);
@@ -222,4 +246,4 @@ class MainWindow : public QMainWindow {
 
   void ui_setShowPlaintFont(const QFont &font);
 };
-#endif  // MAINWINDOW_H
+#endif // MAINWINDOW_H

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>878</width>
-    <height>707</height>
+    <width>831</width>
+    <height>679</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,12 +19,12 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>430</width>
+      <width>360</width>
       <height>300</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="SerialTab">
      <attribute name="title">
@@ -35,7 +35,7 @@
        <rect>
         <x>10</x>
         <y>20</y>
-        <width>430</width>
+        <width>201</width>
         <height>206</height>
        </rect>
       </property>
@@ -422,7 +422,7 @@
        <rect>
         <x>0</x>
         <y>20</y>
-        <width>441</width>
+        <width>360</width>
         <height>124</height>
        </rect>
       </property>
@@ -430,6 +430,55 @@
        <string>网络设置</string>
       </property>
       <layout class="QFormLayout" name="formLayout_4">
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <item>
+          <widget class="QLabel" name="label_4">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>网卡</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="cbbNetworkInterface">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>255</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbEnableIPV6">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>IPV6</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item row="1" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_13">
          <item>
@@ -562,7 +611,41 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="TTKIpEditWidget" name="leIPSource">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>170</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>170</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>127.0.0.1</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -579,12 +662,14 @@
             <font>
              <family>Microsoft YaHei UI</family>
              <pointsize>12</pointsize>
-             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
            <property name="text">
             <string>:</string>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
            </property>
           </widget>
          </item>
@@ -618,63 +703,14 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_12">
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>网卡</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="cbbNetworkInterface">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>255</width>
-             <height>16777215</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="cbEnableIPV6">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>IPV6</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
       </layout>
      </widget>
      <widget class="QTableWidget" name="tbwShowConnnectStatus">
       <property name="geometry">
        <rect>
-        <x>20</x>
+        <x>0</x>
         <y>160</y>
-        <width>400</width>
+        <width>360</width>
         <height>80</height>
        </rect>
       </property>
@@ -710,6 +746,19 @@
       <column/>
       <column/>
      </widget>
+     <widget class="QPushButton" name="openNetButton">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>240</y>
+        <width>160</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>打开</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QGroupBox" name="formGroupBox_2">
@@ -717,7 +766,7 @@
      <rect>
       <x>10</x>
       <y>320</y>
-      <width>440</width>
+      <width>360</width>
       <height>147</height>
      </rect>
     </property>
@@ -739,7 +788,7 @@
        <item>
         <widget class="QCheckBox" name="cbAutoNewLine">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -961,7 +1010,7 @@
      <rect>
       <x>10</x>
       <y>480</y>
-      <width>440</width>
+      <width>360</width>
       <height>91</height>
      </rect>
     </property>
@@ -978,6 +1027,27 @@
      <property name="fieldGrowthPolicy">
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
+     <item row="0" column="0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QRadioButton" name="rbtSASCII">
+         <property name="text">
+          <string>ASCII</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="rbtSHex">
+         <property name="text">
+          <string>Hex</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item row="1" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
@@ -1044,31 +1114,17 @@
        </item>
       </layout>
      </item>
-     <item row="0" column="0">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QRadioButton" name="rbtSASCII">
-         <property name="text">
-          <string>ASCII</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="rbtSHex">
-         <property name="text">
-          <string>Hex</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item row="1" column="1">
       <widget class="QPushButton" name="clearTxHistoryButton">
        <property name="text">
         <string>清除发送历史</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="cb_CRC">
+       <property name="text">
+        <string>CRC</string>
        </property>
       </widget>
      </item>
@@ -1077,7 +1133,7 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>400</x>
       <y>40</y>
       <width>411</width>
       <height>591</height>
@@ -1154,7 +1210,7 @@
      <rect>
       <x>10</x>
       <y>570</y>
-      <width>440</width>
+      <width>360</width>
       <height>60</height>
      </rect>
     </property>
@@ -1203,8 +1259,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>878</width>
-     <height>23</height>
+     <width>831</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1345,6 +1401,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TTKIpEditWidget</class>
+   <extends>QLineEdit</extends>
+   <header>ttkipeditwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

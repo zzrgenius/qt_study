@@ -21,7 +21,7 @@ TCPHelper::TCPHelper(int role, QObject *parent) : QObject(parent) {
                      &TCPHelper::handle_tcp_socket_connected);
     QObject::connect(socket, &QTcpSocket::disconnected, this,
                      &TCPHelper::handle_tcp_socket_disconnected);
-    QObject::connect(socket, &QAbstractSocket::SocketError, this,
+    QObject::connect(socket, &QTcpSocket::errorOccurred, this,
                      &TCPHelper::handle_tcp_socket_error);
     QObject::connect(socket, &QTcpSocket::stateChanged, this,
                      &TCPHelper::handle_tcp_socket_state_changed);
@@ -50,7 +50,8 @@ TCPHelper::~TCPHelper() {
     }
   }
   if (m_timer) {
-    if (m_timer->isActive()) m_timer->stop();
+    if (m_timer->isActive())
+      m_timer->stop();
     m_timer->deleteLater();
   }
 }
@@ -59,7 +60,8 @@ bool TCPHelper::start(const QHostAddress &address, int port) {
   this->port = port;
   this->ip = QHostAddress(address.toIPv4Address()).toString();
   if (this->role == Server) {
-    if (this->server->isListening()) return false;
+    if (this->server->isListening())
+      return false;
     return server->listen(address, port);
   }
   if (this->role == Client) {
@@ -85,7 +87,8 @@ void TCPHelper::stop() {
 
 qint64 TCPHelper::write(const char *data, qint64 len, int id) {
   int si = sockets.count();
-  if (si == 0) return -1;
+  if (si == 0)
+    return -1;
   QTcpSocket *socket = nullptr;
 
   for (int i = 0; i < si; i++) {
@@ -96,29 +99,34 @@ qint64 TCPHelper::write(const char *data, qint64 len, int id) {
       socket = nullptr;
     }
   }
-  if (!socket) return -1;
+  if (!socket)
+    return -1;
   return socket->write(data, len);
 }
 
 qint64 TCPHelper::write(const char *data, int id) {
-  int len = std::strlen(data);
+  int len = strlen(data);
   return write(data, len, id);
 }
 
 void TCPHelper::setAutoWritePriod(int msec) {
   m_priod = msec;
-  if (!m_timer) return;
+  if (!m_timer)
+    return;
   bool ts = m_timer->isActive();
 
-  if (ts) m_timer->stop();
+  if (ts)
+    m_timer->stop();
   m_timer->setInterval(m_priod);
-  if (ts) m_timer->start();
+  if (ts)
+    m_timer->start();
 }
 
 int TCPHelper::autoWritePriod() { return m_priod; }
 
 void TCPHelper::startAutoWrite(const QList<int> ids, int msec) {
-  if (sockets.isEmpty()) return;
+  if (sockets.isEmpty())
+    return;
 
   if (!m_timer) {
     m_timer = new QTimer();
@@ -126,11 +134,13 @@ void TCPHelper::startAutoWrite(const QList<int> ids, int msec) {
                                          &TCPHelper::handle_timer_timeout);
   }
   m_priod = msec;
-  if (m_timer->isActive()) m_timer->stop();
+  if (m_timer->isActive())
+    m_timer->stop();
   m_timer->setInterval(m_priod);
 
   // 查找发送连接队列
-  if (!t_sockets.isEmpty()) t_sockets.clear();
+  if (!t_sockets.isEmpty())
+    t_sockets.clear();
   int si = sockets.count(), pos = -1;
   QTcpSocket *socket = nullptr;
   for (int i = 0; i < si; i++) {
@@ -141,7 +151,8 @@ void TCPHelper::startAutoWrite(const QList<int> ids, int msec) {
     }
   }
 
-  if (!m_timer->isActive()) m_timer->start();
+  if (!m_timer->isActive())
+    m_timer->start();
 }
 
 void TCPHelper::startAutoWrite(const QList<int> ids, const QByteArray &data,
@@ -153,13 +164,16 @@ void TCPHelper::startAutoWrite(const QList<int> ids, const QByteArray &data,
 void TCPHelper::setAutoWrite(const QByteArray &data) { m_auto_data = data; }
 
 void TCPHelper::stopAutoWrite() {
-  if (!m_timer) return;
+  if (!m_timer)
+    return;
 
-  if (m_timer->isActive()) m_timer->stop();
+  if (m_timer->isActive())
+    m_timer->stop();
   QObject::disconnect(t_timeout_connect);
   m_timer->deleteLater();
 
-  if (!t_sockets.isEmpty()) t_sockets.clear();
+  if (!t_sockets.isEmpty())
+    t_sockets.clear();
 
   m_timer = nullptr;
 }
@@ -168,8 +182,10 @@ void TCPHelper::handle_tcp_server_new_connection() {
   QTcpSocket *socket = nullptr;
 
   while (this - server->hasPendingConnections()) {
+
     socket = this->server->nextPendingConnection();
-    if (socket == nullptr) break;
+    if (socket == nullptr)
+      break;
     sockets.append(socket);
 
     QObject::connect(socket, &QTcpSocket::disconnected, this,
@@ -196,7 +212,8 @@ void TCPHelper::handle_tcp_server_error(
 }
 
 void TCPHelper::handle_tcp_socket_connected() {
-  if (this->role == Server) return;
+  if (this->role == Server)
+    return;
   QTcpSocket *socket = qobject_cast<QTcpSocket *>(sender());
   emit connected(this->ip,
                  QHostAddress(socket->peerAddress().toIPv4Address()).toString(),
@@ -236,7 +253,8 @@ void TCPHelper::handle_tcp_socket_ready_read() {
 }
 
 void TCPHelper::handle_timer_timeout() {
-  if (t_sockets.isEmpty()) return;
+  if (t_sockets.isEmpty())
+    return;
   int si = t_sockets.count();
   for (int i = 0; i < si; i++) {
     t_sockets.at(i)->write(m_auto_data);
