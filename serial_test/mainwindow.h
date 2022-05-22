@@ -61,6 +61,7 @@ public:
 
   void serial_send(const QString &data, int len);
   void serial_send(void);
+  SerialProcess *getSerialPtr();
   // Recieve
   int ui_recieve_getRecieveMode(void);
 
@@ -202,6 +203,8 @@ private:
                             .arg(interface.hardwareAddress());
     return str;
   }
+
+  void tf_handle_tick();
   void ui_net_addInterface(QNetworkInterface interface);
   const QString ui_net_getCurrentInterfaceHardAddr(void);
 

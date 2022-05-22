@@ -9,11 +9,16 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 #include($$PWD/TTKWidgetTools/TTKModule/TTKModule.pro)
 include($$PWD/TTKWidgetTools-2.2.0.0/TTKModule/TTKModule.pro)
+include($$PWD/TinyFrame)
+include($$PWD/TinyFrame/utilities)
+
 TEMPLATE = app
 TARGET = DevilTools
 
 SOURCES += \
+    QTinyFrame.cpp \
     TinyFrame/TinyFrame.c \
+    TinyHandle.cpp \
     aboutdialog.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -23,6 +28,7 @@ SOURCES += \
     zr_modbus.cpp
 
 HEADERS += \
+    QTinyFrame.h \
     TinyFrame/TF_Config.h \
     TinyFrame/TinyFrame.h \
     aboutdialog.h \
@@ -31,7 +37,8 @@ HEADERS += \
     settingconfig.h \
     tcphelper.h \
     utilities.h \
-    zr_modbus.h
+    zr_modbus.h \
+
 
 FORMS += \
     aboutdialog.ui \

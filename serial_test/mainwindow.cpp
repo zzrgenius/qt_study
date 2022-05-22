@@ -5,11 +5,14 @@
 #include "ui_mainwindow.h"
 #include "zr_modbus.h"
 
+#include "TinyFrame/TinyFrame.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QTextStream>
 #include <QTime>
 
+SerialProcess *tem_serial;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
@@ -23,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
 
   serialPort = new QSerialPort(this);
   my_serial = new SerialProcess(this);
+  tem_serial = my_serial;
   myuuid = QUuid::createUuid();
 
   //输出结果："b5eddbaf984f418e88ebcf0b8ff3e775"
@@ -1306,7 +1310,7 @@ const QString MainWindow::ui_net_getIP() {
 void MainWindow::ui_net_setIP(const QString &ip) {
   this->ui->leIPSource->setText(ip);
 }
-
+SerialProcess *MainWindow::getSerialPtr() { return this->my_serial; }
 void MainWindow::on_openNetButton_clicked() {
   int tmp = networkStatus;
   if (networkStatus == STATUS_CLOSE) {
