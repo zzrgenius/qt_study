@@ -60,10 +60,46 @@
  * @param num - number to write
  */
 #define WRITENUM_CKSUM(type, num) WRITENUM_BASE(type, num, CKSUM_ADD(cksum, b))
+/** An example listener function */
+void dumpFrameInfo(TF_Msg *msg) {
+  printf("\033[33mFrame info\n"
+         "  type: %02Xh\n"
+         "  data: \"%.*s\"\n"
+         "   len: %u\n"
+         "    id: %Xh\033[0m\n\n",
+         msg->type, msg->len, msg->data, msg->len, msg->frame_id);
+}
+TF_Result myListener(TinyFrame *tf, TF_Msg *msg) {
+  //  dumpFrameInfo(msg);
+  qDebug() << "id :" << msg->frame_id;
+  qDebug() << "type :" << msg->type;
+  qDebug() << "len :" << msg->len;
 
-QTinyFrame::QTinyFrame(QObject *parent) {}
-QTinyFrame::~QTinyFrame() {}
+  return TF_STAY;
+}
+QTinyFrame::QTinyFrame(QObject *parent) {
+  demo_tf = QTinyFrame::TF_Init(TF_MASTER);
+  timer_tf = new QTimer(this);
+  timer_tf->start(1);
+  connect(timer_tf, &QTimer::timeout, this, &QTinyFrame::tf_handle_tick);
+  TF_AddGenericListener(demo_tf, myListener);
+}
+QTinyFrame::~QTinyFrame() {
+  if (timer_tf) {
+    timer_tf->stop();
+    delete timer_tf;
+    timer_tf = nullptr;
+  }
 
+  if (demo_tf) {
+    TF_DeInit(demo_tf);
+    demo_tf = nullptr;
+  }
+}
+void QTinyFrame::tf_handle_tick() {
+  Q_ASSERT(demo_tf);
+  TF_Tick(demo_tf);
+}
 void QTinyFrame::TF_WriteImpl(TinyFrame *tf, const uint8_t *buff,
                               uint32_t len) {
   Q_UNUSED(tf);
@@ -124,7 +160,7 @@ TF_CKSUM TF_CksumEnd(TF_CKSUM cksum) { return cksum; }
 
 #elif TF_CKSUM_TYPE == TF_CKSUM_CRC16
 
-// TODO try to replace with an algorithm
+// TODO try to replace with an algorithm CRC16-IBM
 /** CRC table for the CRC-16. The poly is 0x8005 (x^16 + x^15 + x^2 + 1) */
 const uint16_t crc16_table[256] = {
     0x0000, 0xC0C1, 0xC181, 0x0140, 0xC301, 0x03C0, 0x0280, 0xC241, 0xC601,
@@ -227,7 +263,7 @@ TF_CKSUM QTinyFrame::TF_CksumEnd(TF_CKSUM cksum) { return (TF_CKSUM)~cksum; }
 /** Init with a user-allocated buffer */
 bool QTinyFrame::TF_InitStatic(TinyFrame *tf, TF_Peer peer_bit) {
   if (tf == NULL) {
-    TF_Error("TF_InitStatic() failed, tf is null.");
+    qDebug() << "TF_InitStatic() failed, tf is null.";
     return false;
   }
 
@@ -248,7 +284,7 @@ bool QTinyFrame::TF_InitStatic(TinyFrame *tf, TF_Peer peer_bit) {
 TinyFrame *QTinyFrame::TF_Init(TF_Peer peer_bit) {
   TinyFrame *tf = (TinyFrame *)malloc(sizeof(TinyFrame));
   if (!tf) {
-    TF_Error("TF_Init() failed, out of memory.");
+    qDebug() << "TF_Init() failed, out of memory.";
     return NULL;
   }
 
@@ -257,7 +293,7 @@ TinyFrame *QTinyFrame::TF_Init(TF_Peer peer_bit) {
 }
 
 /** Release the struct */
-void TF_DeInit(TinyFrame *tf) {
+void QTinyFrame::TF_DeInit(TinyFrame *tf) {
   if (tf == NULL)
     return;
   free(tf);
@@ -384,7 +420,7 @@ bool QTinyFrame::TF_AddIdListener(TinyFrame *tf, TF_Msg *msg, TF_Listener cb,
     }
   }
 
-  TF_Error("Failed to add ID listener");
+  qDebug() << "Failed to add ID listener";
   return false;
 }
 
@@ -406,7 +442,7 @@ bool QTinyFrame::TF_AddTypeListener(TinyFrame *tf, TF_TYPE frame_type,
     }
   }
 
-  TF_Error("Failed to add type listener");
+  qDebug() << "Failed to add type listener";
   return false;
 }
 
@@ -426,7 +462,7 @@ bool QTinyFrame::TF_AddGenericListener(TinyFrame *tf, TF_Listener cb) {
     }
   }
 
-  TF_Error("Failed to add generic listener");
+  qDebug() << "Failed to add generic listener";
   return false;
 }
 
@@ -443,7 +479,7 @@ bool QTinyFrame::TF_RemoveIdListener(TinyFrame *tf, TF_ID frame_id) {
     }
   }
 
-  TF_Error("ID listener %d to remove not found", (int)frame_id);
+  qDebug() << "ID listener %d to remove not found" << (int)frame_id;
   return false;
 }
 
@@ -460,7 +496,7 @@ bool QTinyFrame::TF_RemoveTypeListener(TinyFrame *tf, TF_TYPE type) {
     }
   }
 
-  TF_Error("Type listener %d to remove not found", (int)type);
+  qDebug() << "Type listener %d to remove not found" << (int)type;
   return false;
 }
 
@@ -477,7 +513,7 @@ bool QTinyFrame::TF_RemoveGenericListener(TinyFrame *tf, TF_Listener cb) {
     }
   }
 
-  TF_Error("Generic listener to remove not found");
+  qDebug() << "Generic listener to remove not found";
   return false;
 }
 
@@ -580,7 +616,7 @@ void QTinyFrame::TF_HandleReceivedMessage(TinyFrame *tf) {
     }
   }
 
-  TF_Error("Unhandled message, type %d", (int)msg.type);
+  qDebug() << "Unhandled message, type " << (int)msg.type;
 }
 
 /** Externally renew an ID listener */
@@ -596,7 +632,7 @@ bool QTinyFrame::TF_RenewIdListener(TinyFrame *tf, TF_ID id) {
     }
   }
 
-  TF_Error("Renew listener: not found (id %d)", (int)id);
+  qDebug() << "Renew listener: not found (id " << (int)id;
   return false;
 }
 
@@ -609,7 +645,7 @@ void QTinyFrame::TF_Accept(TinyFrame *tf, const uint8_t *buffer,
                            uint32_t count) {
   uint32_t i;
   for (i = 0; i < count; i++) {
-    TF_AcceptChar(tf, buffer[i]);
+    QTinyFrame::TF_AcceptChar(tf, buffer[i]);
   }
 }
 
@@ -635,12 +671,13 @@ void QTinyFrame::pars_begin_frame(TinyFrame *tf) {
 }
 
 /** Handle a received char - here's the main state machine */
+// 01 01 00 02 21 44 FD 12 34 77 0D test data
 void QTinyFrame::TF_AcceptChar(TinyFrame *tf, unsigned char c) {
   // Parser timeout - clear
   if (tf->parser_timeout_ticks >= TF_PARSER_TIMEOUT_TICKS) {
     if (tf->state != TFState_SOF) {
-      TF_ResetParser(tf);
-      TF_Error("Parser timeout");
+      QTinyFrame::TF_ResetParser(tf);
+      qDebug() << "Parser timeout";
     }
   }
   tf->parser_timeout_ticks = 0;
@@ -706,7 +743,7 @@ void QTinyFrame::TF_AcceptChar(TinyFrame *tf, unsigned char c) {
       CKSUM_FINALIZE(tf->cksum);
 
       if (tf->cksum != tf->ref_cksum) {
-        TF_Error("Rx head cksum mismatch");
+        qDebug() << "Rx head cksum mismatch";
         TF_ResetParser(tf);
         break;
       }
@@ -725,7 +762,7 @@ void QTinyFrame::TF_AcceptChar(TinyFrame *tf, unsigned char c) {
       CKSUM_RESET(tf->cksum); // Start collecting the payload
 
       if (tf->len > TF_MAX_PAYLOAD_RX) {
-        TF_Error("Rx payload too long: %d", (int)tf->len);
+        qDebug() << "Rx payload too long: %d" << (int)tf->len;
         // ERROR - frame too long. Consume, but do not store.
         tf->discard_data = true;
       }
@@ -758,11 +795,12 @@ void QTinyFrame::TF_AcceptChar(TinyFrame *tf, unsigned char c) {
     COLLECT_NUMBER(tf->ref_cksum, TF_CKSUM) {
       // Check the header checksum against the computed value
       CKSUM_FINALIZE(tf->cksum);
+
       if (!tf->discard_data) {
         if (tf->cksum == tf->ref_cksum) {
           QTinyFrame::TF_HandleReceivedMessage(tf);
         } else {
-          TF_Error("Body cksum mismatch");
+          qDebug() << "Body cksum mismatch";
         }
       }
 
@@ -1052,7 +1090,7 @@ void QTinyFrame::TF_Tick(TinyFrame *tf) {
       continue;
     // count down...
     if (--lst->timeout == 0) {
-      TF_Error("ID listener %d has expired", (int)lst->id);
+      qDebug() << "ID listener %d has expired" << (int)lst->id;
       if (lst->fn_timeout != NULL) {
         lst->fn_timeout(tf); // execute timeout function
       }

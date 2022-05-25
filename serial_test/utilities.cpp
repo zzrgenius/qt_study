@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include <QTextCodec>
+
 QString HexToAscII(QString text) {
   QTextCodec *tc = QTextCodec::codecForName("System");
   QString tmp;

@@ -30,31 +30,14 @@ public:
   void TF_ReleaseTx(TinyFrame *tf);
   //{    // release mutex  }
 
-signals:
-private slots:
-  //  void dataReady();
-
-private:
-  QByteArray buffer;
-  QMutex frame_mutex;
-  QTimer *timer_handshake = nullptr;
-  QTimer *timer_tf = nullptr;
-
-  /** Initialize a checksum */
-  TF_CKSUM TF_CksumStart(void);
-
-  /** Update a checksum with a byte */
-  TF_CKSUM TF_CksumAdd(TF_CKSUM cksum, uint8_t byte);
-
-  /** Finalize the checksum calculation */
-  TF_CKSUM TF_CksumEnd(TF_CKSUM cksum);
-
-  void TF_SendFrame_End(TinyFrame *tf);
-  bool TF_SendFrame(TinyFrame *tf, TF_Msg *msg, TF_Listener listener,
-                    TF_Listener_Timeout ftimeout, TF_TICKS timeout);
-  inline uint32_t TF_ComposeTail(uint8_t *outbuff, TF_CKSUM *cksum);
-  // ---------------------------------- INIT ------------------------------
-
+  /**
+   * Accept incoming bytes & parse frames
+   *
+   * @param tf - instance
+   * @param buffer - byte buffer to process
+   * @param count - nr of bytes in the buffer
+   */
+  void TF_Accept(TinyFrame *tf, const uint8_t *buffer, uint32_t count);
   /**
    * Initialize the TinyFrame engine.
    * This can also be used to completely reset it (removing all listeners
@@ -92,18 +75,6 @@ private:
    */
   void TF_DeInit(TinyFrame *tf);
 
-  // ---------------------------------- API CALLS
-  // --------------------------------------
-
-  /**
-   * Accept incoming bytes & parse frames
-   *
-   * @param tf - instance
-   * @param buffer - byte buffer to process
-   * @param count - nr of bytes in the buffer
-   */
-  void TF_Accept(TinyFrame *tf, const uint8_t *buffer, uint32_t count);
-
   /**
    * Accept a single incoming byte
    *
@@ -111,6 +82,35 @@ private:
    * @param c - a received char
    */
   void TF_AcceptChar(TinyFrame *tf, uint8_t c);
+
+signals:
+private slots:
+  //  void dataReady();
+
+private:
+  QByteArray buffer;
+  QMutex frame_mutex;
+  QTimer *timer_handshake = nullptr;
+  QTimer *timer_tf = nullptr;
+
+  /** Initialize a checksum */
+  TF_CKSUM TF_CksumStart(void);
+
+  /** Update a checksum with a byte */
+  TF_CKSUM TF_CksumAdd(TF_CKSUM cksum, uint8_t byte);
+
+  /** Finalize the checksum calculation */
+  TF_CKSUM TF_CksumEnd(TF_CKSUM cksum);
+
+  void TF_SendFrame_End(TinyFrame *tf);
+  bool TF_SendFrame(TinyFrame *tf, TF_Msg *msg, TF_Listener listener,
+                    TF_Listener_Timeout ftimeout, TF_TICKS timeout);
+  inline uint32_t TF_ComposeTail(uint8_t *outbuff, TF_CKSUM *cksum);
+
+  // ---------------------------------- INIT ------------------------------
+
+  // ---------------------------------- API CALLS
+  // --------------------------------------
 
   /**
    * This function should be called periodically.

@@ -5,6 +5,7 @@
 #include "settingconfig.h"
 #include "tcphelper.h"
 
+#include "QTinyFrame.h"
 #include "ttkmarqueelabel.h"
 #include "ui_mainwindow.h"
 #include "utilities.h"
@@ -23,6 +24,7 @@
 #include <QMutex>
 #include <QNetworkAddressEntry>
 #include <QNetworkInterface>
+#include <QObject>
 #include <QPixmap>
 #include <QSerialPort>
 #include <QSerialPortInfo>
@@ -135,6 +137,7 @@ private:
   QSerialPort *serialPort;
   SerialProcess *my_serial = nullptr; // 串口助手
   TCPHelper *tcp_helper = nullptr;
+  QTinyFrame *my_qframe = nullptr;
   //  UDPHelper *udp_helper = nullptr;
   QMutex m_mutex;
   QUuid myuuid;
@@ -144,6 +147,7 @@ private:
       QByteArray(settingConfig.logConfig.bufferSize * 1024, '\0');
 
   QByteArray recieveBuffer;
+  QByteArray frame_recv;
 
   int currentTab = 0;
   int serialStatus = STATUS_CLOSE;
@@ -153,6 +157,7 @@ private:
 
   QTimer refresh_port_timer;
   QTimer resend_timer;
+  QTimer *recv_timer;
   SettingConfig settingConfig;
 
   int ui_getCurrentTab(void);
@@ -204,7 +209,6 @@ private:
     return str;
   }
 
-  void tf_handle_tick();
   void ui_net_addInterface(QNetworkInterface interface);
   const QString ui_net_getCurrentInterfaceHardAddr(void);
 
@@ -248,5 +252,6 @@ private:
   void ui_recieve_setRecieveFontColorState(bool state);
 
   void ui_setShowPlaintFont(const QFont &font);
+  void rec_tinyFrameBufferHandle(void);
 };
 #endif // MAINWINDOW_H

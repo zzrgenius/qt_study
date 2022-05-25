@@ -12,7 +12,7 @@
 #include <QTextStream>
 #include <QTime>
 
-SerialProcess *tem_serial;
+// SerialProcess *tem_serial;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
@@ -26,7 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
 
   serialPort = new QSerialPort(this);
   my_serial = new SerialProcess(this);
-  tem_serial = my_serial;
+  my_qframe = new QTinyFrame();
+  //  tem_serial = my_serial;
   myuuid = QUuid::createUuid();
 
   //输出结果："b5eddbaf984f418e88ebcf0b8ff3e775"
@@ -44,6 +45,10 @@ void MainWindow::ui_initConnect() {
                    &MainWindow::handle_serial_error);
   QMetaObject::Connection s_connect = my_serial->callOnReadyRead(
       this, &MainWindow::handle_serialhelper_readyread);
+  recv_timer = new QTimer(this);
+
+  connect(recv_timer, &QTimer::timeout, this,
+          &MainWindow::rec_tinyFrameBufferHandle);
 
   QObject::connect(&refresh_port_timer, &QTimer::timeout, [=]() {
     isAutorefresh = true;
@@ -719,12 +724,17 @@ void MainWindow::handle_serial_recieve_data(const QByteArray &data, int len) {
 void MainWindow::handle_serialhelper_readyread() {
   qint64 len = 0, tmp = 0;
   QByteArray data;
-
+  QByteArray data_to_append;
   tmp = my_serial->bytesAvailable();
   while (tmp > 0) {
     len += tmp;
-    data.append(my_serial->readAll());
+    data_to_append = my_serial->readAll();
+    data.append(data_to_append);
+    frame_recv.append(data_to_append);
     tmp = my_serial->bytesAvailable();
+  }
+  if (!recv_timer->isActive()) {
+    recv_timer->start(500); // 500ms定时器
   }
   handle_serial_recieve_data(data, len);
 }
@@ -1351,5 +1361,21 @@ void MainWindow::on_openNetButton_clicked() {
     //        udp_helper = nullptr;
     //      }
     //    }
+  }
+}
+void MainWindow::rec_tinyFrameBufferHandle() {
+  quint8 data_temp;
+  if (!frame_recv.isEmpty()) {
+    qDebug() << "frame" << endl;
+    this->my_qframe->TF_Accept(this->my_qframe->demo_tf,
+                               reinterpret_cast<quint8 *>(frame_recv.data()),
+                               frame_recv.length());
+
+    for (int i = 0; i < frame_recv.length(); i++) {
+      data_temp = (quint8)frame_recv.at(i);
+      qDebug() << data_temp;
+    }
+    frame_recv.clear();
+    qDebug() << frame_recv.length() << endl;
   }
 }

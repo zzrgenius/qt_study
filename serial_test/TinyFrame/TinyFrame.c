@@ -3,7 +3,6 @@
 #include <stdlib.h> // - for malloc() if dynamic constructor is used
 //---------------------------------------------------------------------------
 
-// Compatibility with ESP8266 SDK
 
 //#if !TF_USE_MUTEX
 //// Not thread safe lock implementation, used if user did not provide a better

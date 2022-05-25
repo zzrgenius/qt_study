@@ -18,6 +18,8 @@ TARGET = DevilTools
 SOURCES += \
     QTinyFrame.cpp \
     TinyFrame/TinyFrame.c \
+    TinyFrame/utilities/payload_builder.c \
+    TinyFrame/utilities/payload_parser.c \
     TinyHandle.cpp \
     aboutdialog.cpp \
     main.cpp \
@@ -31,6 +33,9 @@ HEADERS += \
     QTinyFrame.h \
     TinyFrame/TF_Config.h \
     TinyFrame/TinyFrame.h \
+    TinyFrame/utilities/payload_builder.h \
+    TinyFrame/utilities/payload_parser.h \
+    TinyFrame/utilities/type_coerce.h \
     aboutdialog.h \
     mainwindow.h \
     serialprocess.h \
@@ -63,6 +68,3 @@ DISTFILES += \
 
 #INCLUDEPATH += $$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/debug
 #DEPENDPATH += $$PWD/../../build-serial_test-Desktop_Qt_5_12_12_MinGW_32_bit-Debug/debug
-
-
-
