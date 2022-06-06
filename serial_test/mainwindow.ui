@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>831</width>
-    <height>679</height>
+    <width>888</width>
+    <height>732</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>360</width>
-      <height>300</height>
+      <width>411</width>
+      <height>331</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -422,7 +422,7 @@
        <rect>
         <x>0</x>
         <y>20</y>
-        <width>360</width>
+        <width>381</width>
         <height>124</height>
        </rect>
       </property>
@@ -710,7 +710,7 @@
        <rect>
         <x>0</x>
         <y>160</y>
-        <width>360</width>
+        <width>391</width>
         <height>80</height>
        </rect>
       </property>
@@ -750,13 +750,13 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>240</y>
+        <y>250</y>
         <width>160</width>
         <height>23</height>
        </rect>
       </property>
       <property name="text">
-       <string>打开</string>
+       <string>Connect</string>
       </property>
      </widget>
     </widget>
@@ -764,10 +764,10 @@
    <widget class="QGroupBox" name="formGroupBox_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>320</y>
-      <width>360</width>
-      <height>147</height>
+      <x>0</x>
+      <y>350</y>
+      <width>431</width>
+      <height>151</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -1009,8 +1009,8 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>480</y>
-      <width>360</width>
+      <y>500</y>
+      <width>431</width>
       <height>91</height>
      </rect>
     </property>
@@ -1130,86 +1130,11 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>400</x>
-      <y>40</y>
-      <width>411</width>
-      <height>591</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QPlainTextEdit" name="pteShowRecieve"/>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
-       <item>
-        <widget class="QPlainTextEdit" name="pteSend">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>80</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="QPushButton" name="pbtSend">
-           <property name="text">
-            <string>发送</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pbtClearSend">
-           <property name="text">
-            <string>清空</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QComboBox" name="cbbSendHistory">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>16</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>64</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
    <widget class="QGroupBox" name="horizontalGroupBox_8">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>570</y>
+      <y>600</y>
       <width>360</width>
       <height>60</height>
      </rect>
@@ -1253,13 +1178,106 @@
      </item>
     </layout>
    </widget>
+   <widget class="QTabWidget" name="tabWidgetShow">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>20</y>
+      <width>441</width>
+      <height>661</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="Show">
+     <attribute name="title">
+      <string>Show</string>
+     </attribute>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>411</width>
+        <height>621</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPlainTextEdit" name="pteShowRecieve"/>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QPlainTextEdit" name="pteSend">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>80</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QPushButton" name="pbtSend">
+             <property name="text">
+              <string>发送</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pbtClearSend">
+             <property name="text">
+              <string>清空</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QComboBox" name="cbbSendHistory">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>64</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>831</width>
+     <width>888</width>
      <height>26</height>
     </rect>
    </property>

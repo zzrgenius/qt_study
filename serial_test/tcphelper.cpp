@@ -1,8 +1,9 @@
 #include "tcphelper.h"
-
+#include "mainwindow.h"
+#include "settingconfig.h"
 #include <QDebug>
+TCPHelper::TCPHelper(int role, QWidget *parent) : QObject(parent) {
 
-TCPHelper::TCPHelper(int role, QObject *parent) : QObject(parent) {
   if (role == Server) {
     this->role = role;
     server = new QTcpServer(this);
@@ -11,8 +12,7 @@ TCPHelper::TCPHelper(int role, QObject *parent) : QObject(parent) {
                      &TCPHelper::handle_tcp_server_new_connection);
     QObject::connect(server, &QTcpServer::acceptError, this,
                      &TCPHelper::handle_tcp_server_error);
-  }
-  if (role == Client) {
+  } else if (role == Client) {
     this->role = role;
     QTcpSocket *socket = new QTcpSocket(this);
     sockets.append(socket);
@@ -107,6 +107,22 @@ qint64 TCPHelper::write(const char *data, qint64 len, int id) {
 qint64 TCPHelper::write(const char *data, int id) {
   int len = strlen(data);
   return write(data, len, id);
+}
+qint64 TCPHelper::write(const QByteArray &data) {
+  if (this->role == Client) {
+    QTcpSocket *socket = sockets.first();
+    socket->write(data);
+  } else if (this->role == Server) {
+    //  if (t_sockets.isEmpty())
+    //    return 0;
+    int si = sockets.count();
+    qDebug() << si;
+    for (int i = 0; i < si; i++) {
+      sockets.at(i)->write(data);
+    }
+  }
+
+  return 0;
 }
 
 void TCPHelper::setAutoWritePriod(int msec) {
@@ -247,6 +263,10 @@ void TCPHelper::handle_tcp_socket_ready_read() {
     len += tmp;
     tmp = socket->bytesAvailable();
   }
+  //  TcprecieveBuffer.append(in);
+  //  qDebug() << TcprecieveBuffer;
+
+  emit data_ready(in, len);
   emit receiveData(
       QHostAddress(socket->peerAddress().toIPv4Address()).toString(),
       this->port, socket->peerPort(), in, len);
@@ -259,4 +279,23 @@ void TCPHelper::handle_timer_timeout() {
   for (int i = 0; i < si; i++) {
     t_sockets.at(i)->write(m_auto_data);
   }
+}
+
+void TCPHelper::handle_tcp_recieve_data(const QByteArray &data, int len) {
+  rxBytes += len;
+  TcprecieveBuffer.append(data);
+  qDebug() << TcprecieveBuffer;
+  //  cui->ui_showRecieveData(data, len);
+
+  //    cui->pteShowRecieve
+
+  //  if (!TcprecieveBuffer.isEmpty()) {
+  //      cui->ui_showRecieveData(TcprecieveBuffer, TcprecieveBuffer.size());
+  //      TcprecieveBuffer.clear();
+  //    }
+  //  }
+
+  //  if (cui->settingConfig.showConfig.enableAutoNewLine) {
+  //  } else {
+  //  }
 }

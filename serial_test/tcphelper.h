@@ -1,8 +1,7 @@
 #ifndef TCPHELPER_H
 #define TCPHELPER_H
 
-#include <QObject>
-
+#include "ui_mainwindow.h"
 #include <QAbstractSocket>
 #include <QDataStream>
 #include <QDebug>
@@ -10,17 +9,19 @@
 #include <QMutex>
 #include <QMutexLocker>
 #include <QNetworkInterface>
+#include <QObject>
 #include <QString>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QVector>
 #include <QtNetwork>
+class MainWindow;
 class TCPHelper : public QObject {
   Q_OBJECT
 public:
   enum Role { Client = 0, Server = 1 };
 
-  explicit TCPHelper(int role, QObject *parent = nullptr);
+  explicit TCPHelper(int role, QWidget *parent = nullptr);
 
   ~TCPHelper();
 
@@ -32,6 +33,7 @@ public:
   inline qint64 write(const QByteArray &data, int id) {
     return write(data.constData(), data.size(), id);
   }
+  qint64 write(const QByteArray &data);
 
   void setAutoWritePriod(int msec = 0);
   int autoWritePriod(void);
@@ -40,7 +42,7 @@ public:
   void startAutoWrite(const QList<int> ids, const QByteArray &data,
                       int msec = 0);
   void stopAutoWrite(void);
-
+  Ui::MainWindow *cui; //-----------------2
 signals:
 
   void connected(const QString &source_ip, const QString &des_ip, int port,
@@ -52,6 +54,7 @@ signals:
   //    void readyRead(void);
   void receiveData(const QString &ip, int port, int id, const QByteArray &data,
                    int len);
+  void data_ready(const QByteArray &data, int len);
 
 private slots:
 
@@ -82,8 +85,11 @@ private:
   QByteArray m_auto_data;
   QMetaObject::Connection t_timeout_connect;
   QVector<QTcpSocket *> t_sockets;
+  QByteArray TcprecieveBuffer;
+  ulong rxBytes = 0;
 
   void initConnect(void);
+  void handle_tcp_recieve_data(const QByteArray &data, int len);
 };
 
 #endif // TCPHELPER_H

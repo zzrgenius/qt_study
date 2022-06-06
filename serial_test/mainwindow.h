@@ -1,11 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "QTinyFrame.h"
 #include "serialprocess.h"
 #include "settingconfig.h"
 #include "tcphelper.h"
-
-#include "QTinyFrame.h"
 #include "ttkmarqueelabel.h"
 #include "ui_mainwindow.h"
 #include "utilities.h"
@@ -48,6 +47,8 @@ class MainWindow : public QMainWindow {
 public:
   MainWindow(QWidget *parent = nullptr);
   ~MainWindow();
+  Ui::MainWindow *ui;
+
   int btn_on_off = 0;
   enum { TAB_SERIAL = 0, TAB_NETWORK = 1 };
   enum DEVICE_STATUS {
@@ -56,6 +57,8 @@ public:
     STATUS_PAUSE = 1,
     STATUS_OCCUR_ERROR = 2
   };
+  SettingConfig settingConfig;
+
   const QString ui_getSendData(void);
 
   void ui_setSendData(const QString &str);
@@ -63,6 +66,9 @@ public:
 
   void serial_send(const QString &data, int len);
   void serial_send(void);
+  void tcp_send(void);
+  void tcp_send(const QString &data, int len);
+
   SerialProcess *getSerialPtr();
   // Recieve
   int ui_recieve_getRecieveMode(void);
@@ -87,11 +93,13 @@ public:
   // LOG
   const QString ui_log_getLogPath();
   bool ui_log_isEnableLog(void);
+  void ui_showRecieveData(const QByteArray &data, int len);
 
 public slots:
 
   void handle_serial_recieve_data(const QByteArray &data, int len);
   void handle_serial_error(int error);
+  void handle_tcp_recieve_data(const QByteArray &data, int len);
 
 private slots:
   void on_openButton_clicked();
@@ -128,13 +136,11 @@ signals:
                    const QString &desip, int id = -1);
 
 private:
-  Ui::MainWindow *ui;
   QLabel *slabel;
   QLabel *lbTxBytes;
   QLabel *lbRxBytes;
   TTKMarqueeLabel *lbLogPath;
 
-  QSerialPort *serialPort;
   SerialProcess *my_serial = nullptr; // 串口助手
   TCPHelper *tcp_helper = nullptr;
   QTinyFrame *my_qframe = nullptr;
@@ -158,7 +164,6 @@ private:
   QTimer refresh_port_timer;
   QTimer resend_timer;
   QTimer *recv_timer;
-  SettingConfig settingConfig;
 
   int ui_getCurrentTab(void);
 
@@ -234,7 +239,6 @@ private:
   void ui_showSend(const QString &str, bool t = false);
   void ui_showRecieve(const QString &str, bool t = false);
   void ui_clearRecieve(void);
-  void ui_showRecieveData(const QByteArray &data, int len);
   //    void ui_showSendData(const QByteArray& data, int len);
   void ui_showMessage(const QString &message, int time = 0,
                       QColor color = Qt::darkGreen);
