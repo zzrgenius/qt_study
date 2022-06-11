@@ -12,7 +12,7 @@
 class SerialProcess : public QSerialPort {
   Q_OBJECT
 
- public:
+public:
   explicit SerialProcess(QObject *parent = nullptr);
   explicit SerialProcess(const QSerialPortInfo &info,
                          QObject *parent = nullptr);
@@ -42,16 +42,16 @@ class SerialProcess : public QSerialPort {
   qint32 baudRate(Directions directions = AllDirections) const;
 
   bool setDataBits(DataBits dataBits);
-  DataBits dataBits() const;
+  //  DataBits dataBits() const;
 
   bool setParity(Parity parity);
-  Parity parity() const;
+  //  Parity parity() const;
 
   bool setStopBits(StopBits stopBits);
   StopBits stopBits() const;
 
   bool setFlowControl(FlowControl flowControl);
-  FlowControl flowControl() const;
+  //  FlowControl flowControl() const;
 
   bool setDataTerminalReady(bool set);
   bool isDataTerminalReady();
@@ -88,17 +88,18 @@ class SerialProcess : public QSerialPort {
   void stopAutoWrite(void);
   template <typename... Args>
   QMetaObject::Connection callOnReadyRead(Args &&...args) {
-    if (!m_port) return QMetaObject::Connection();
+    if (!m_port)
+      return QMetaObject::Connection();
     //        s_connect = QObject::connect(m_port, &QSerialPort::readyRead,
     //        std::forward<Args>(args)...); return s_connect;
     return QObject::connect(m_port, &QSerialPort::readyRead,
                             std::forward<Args>(args)...);
   }
 
- signals:
+signals:
   void errorOccurred(int err);
 
- private:
+private:
   QSerialPort *m_port = nullptr;
 
   //    QMetaObject::Connection s_connect;
@@ -112,4 +113,4 @@ class SerialProcess : public QSerialPort {
 
   void handle_QTimer_timeout(void);
 };
-#endif  // SERIALPROCESS_H
+#endif // SERIALPROCESS_H

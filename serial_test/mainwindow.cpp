@@ -1,11 +1,11 @@
 #include "mainwindow.h"
 
+#include "TinyFrame/TinyFrame.h"
 #include "aboutdialog.h"
 #include "serialprocess.h"
 #include "ui_mainwindow.h"
 #include "zr_modbus.h"
-
-#include "TinyFrame/TinyFrame.h"
+#include <QRegExp>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -815,7 +815,7 @@ void MainWindow::serial_send(const QString &data, int len) {
   }
   if (settingConfig.sendConfig.sendMode == HEX_MODE) {
     qDebug() << sendStr;
-    QString tm_str = sendStr.remove(QRegExp("\\s"));
+    QString tm_str = sendStr.remove(QRegularExpression("\\s"));
     qDebug() << tm_str;
     len = tm_str.size();
     if (len % 2 == 1) {
@@ -894,7 +894,7 @@ void MainWindow::tcp_send(const QString &data, int len) {
   }
   if (settingConfig.sendConfig.sendMode == HEX_MODE) {
     qDebug() << sendStr;
-    QString tm_str = sendStr.remove(QRegExp("\\s"));
+    QString tm_str = sendStr.remove(QRegularExpression("\\s"));
     qDebug() << tm_str;
     len = tm_str.size();
     if (len % 2 == 1) {

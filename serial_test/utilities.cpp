@@ -8,7 +8,7 @@ QString HexToAscII(QString text) {
   //  QStringList temp_list = text.split(" ", QString::SkipEmptyParts);
   QStringList temp_list = text.split(" ");
 
-  foreach (QString str, temp_list) { ascii_data.append(str); }
+  foreach (QString str, temp_list) { ascii_data.append(str.toUtf8()); }
   tmp = tc->toUnicode(QByteArray::fromHex(ascii_data));
   return tmp;
 }
